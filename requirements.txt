@@ -1,0 +1,11 @@
+# Core inference — install torch from https://pytorch.org if you need a specific CUDA build
+piano_transcription_inference>=0.0.5
+torch
+torchaudio
+librosa
+soundfile
+numpy
+mido
+customtkinter>=5.2.0,<7
+Pillow
+requests
