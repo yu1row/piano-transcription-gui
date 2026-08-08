@@ -17,6 +17,7 @@ _tmp_*
 .DS_Store
 Thumbs.db
 third_party/
+docs/promo/
 *.spec.bak
 .pytest_cache/
 .mypy_cache/
