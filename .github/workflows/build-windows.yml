@@ -25,7 +25,9 @@ jobs:
         id: version
         shell: pwsh
         run: |
-          $v = python -c "import re; t=open('version.py',encoding='utf-8').read(); print(re.search(r'__version__\\s*=\\s*\"([^\"]+)\"', t).group(1))"
+          $line = Get-Content version.py | Where-Object { $_ -match '__version__\s*=\s*"([^"]+)"' } | Select-Object -First 1
+          if (-not $line) { throw "Could not parse __version__ from version.py" }
+          $v = [regex]::Match($line, '"([^"]+)"').Groups[1].Value
           "value=$v" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           Write-Host "version=$v"
 
