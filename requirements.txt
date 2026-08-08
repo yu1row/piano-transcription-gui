@@ -1,11 +1,17 @@
-# Core inference - for a specific CUDA build, install torch from https://pytorch.org first
+# Runtime
 piano_transcription_inference>=0.0.5
 torch
 torchaudio
-librosa
+librosa>=0.10.0
 soundfile
 numpy
 mido
+pretty_midi
+sounddevice
 customtkinter>=5.2.0,<7
 Pillow
 requests
+soxr
+
+# Manual PDF generation (also used by release build)
+fpdf2>=2.7.0

@@ -20,14 +20,23 @@ ffmpeg を同梱する場合は **別実行ファイルとして同梱**して�
 ## 機能
 
 - wav / mp3 / flac / ogg / m4a など一般的なオーディオ形式に対応
-- 変換パラメータを GUI で設定
+- 変換パラメータを GUI で設定（ラベルにツールチップあり）
   - デバイス (`auto` / `cuda` / `cpu`)
   - セグメント長（秒）
   - Onset / Offset / Frame / Pedal offset 閾値
   - バッチサイズ
   - モデルチェックポイントパス
+- **音源から自動設定**（音量・オンセット密度・ノイズっぽさから推定）
+- **短い区間のプレビュー変換・再生**
+- 説明書 PDF（`docs/manual.md` → ビルド時に `docs/manual.pdf`）
 - 初回実行時に事前学習モデル (~165 MB) を自動ダウンロード
 - Windows 向け exe（onedir）ビルド
+
+## 既知の互換性修正
+
+上流 `piano_transcription_inference.load_audio` は librosa 0.10+ で
+`librosa.core.audio` 参照により失敗します。本アプリは `audio_io.py` の
+`librosa.load` ベース実装で回避しています。
 
 ## 必要環境
 

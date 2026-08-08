@@ -59,6 +59,10 @@ if (-not $SkipFfmpeg -and -not (Test-Path $ffmpegExe)) {
     Write-Host "Skipping ffmpeg bundle (mp3 etc. will need system ffmpeg on PATH)"
 }
 
+Write-Step "Building manual PDF from Markdown"
+& $Python scripts\build_manual_pdf.py
+if ($LASTEXITCODE -ne 0) { throw "manual PDF build failed with exit code $LASTEXITCODE" }
+
 Write-Step "Cleaning previous build outputs"
 foreach ($dir in @("build", "dist")) {
     if (Test-Path $dir) { Remove-Item $dir -Recurse -Force }
@@ -73,10 +77,13 @@ if (-not (Test-Path (Join-Path $outDir "PianoTranscriptionGUI.exe"))) {
     throw "Expected exe not found under $outDir"
 }
 
-# Copy license/notice next to the app for redistribution
+# Copy license/notice/manual next to the app for redistribution
 Copy-Item "LICENSE" $outDir -Force -ErrorAction SilentlyContinue
 Copy-Item "NOTICE" $outDir -Force -ErrorAction SilentlyContinue
 Copy-Item "README.md" $outDir -Force -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Force -Path (Join-Path $outDir "docs") | Out-Null
+Copy-Item "docs\manual.md" (Join-Path $outDir "docs\manual.md") -Force
+Copy-Item "docs\manual.pdf" (Join-Path $outDir "docs\manual.pdf") -Force
 
 Write-Step "Creating zip archive"
 $version = (& $Python -c "from version import __version__; print(__version__)").Trim()

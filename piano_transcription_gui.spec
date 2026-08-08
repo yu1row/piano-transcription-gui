@@ -56,6 +56,14 @@ ffmpeg_src = ROOT / "third_party" / "ffmpeg" / "ffmpeg.exe"
 if ffmpeg_src.is_file():
     datas.append((str(ffmpeg_src), "."))
 
+# Manual (Markdown + PDF)
+manual_md = ROOT / "docs" / "manual.md"
+manual_pdf = ROOT / "docs" / "manual.pdf"
+if manual_md.is_file():
+    datas.append((str(manual_md), "docs"))
+if manual_pdf.is_file():
+    datas.append((str(manual_pdf), "docs"))
+
 a = Analysis(
     ["main.py"],
     pathex=[str(ROOT)],

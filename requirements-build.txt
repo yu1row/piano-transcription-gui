@@ -1,1 +1,2 @@
 pyinstaller>=6.3.0
+fpdf2>=2.7.0
