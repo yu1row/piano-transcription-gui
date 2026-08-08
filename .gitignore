@@ -15,3 +15,7 @@ build/
 *.midi
 .DS_Store
 Thumbs.db
+third_party/
+*.spec.bak
+.pytest_cache/
+.mypy_cache/

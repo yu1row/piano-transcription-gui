@@ -19,8 +19,9 @@ from transcriber import (
     default_checkpoint_path,
     transcribe_file,
 )
+from version import APP_DISPLAY_NAME, __version__
 
-APP_TITLE = "Piano Transcription"
+APP_TITLE = f"{APP_DISPLAY_NAME} v{__version__}"
 SUPPORTED_GLOBS = " ".join(f"*{ext}" for ext in AUDIO_EXTENSIONS)
 
 
@@ -55,7 +56,7 @@ class App(ctk.CTk):
 
         subtitle = ctk.CTkLabel(
             self,
-            text="ByteDance Piano Transcription (piano_transcription_inference)",
+            text="ByteDance Piano Transcription (piano_transcription_inference)  |  Apache-2.0",
             font=ctk.CTkFont(size=12),
             text_color=("gray40", "gray65"),
         )

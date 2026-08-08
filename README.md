@@ -2,7 +2,20 @@
 
 [ByteDance Piano Transcription](https://github.com/bytedance/piano_transcription) の推論パッケージ
 [`piano_transcription_inference`](https://github.com/qiuqiangkong/piano_transcription_inference)
-を使い、ローカルのピアノ音源を MIDI に変換する GUI アプリです。
+を使い、ローカルのピアノ音源を MIDI に変換する Windows 向け GUI アプリです。
+
+## License
+
+本リポジトリは **Apache License 2.0** です（[LICENSE](LICENSE)）。
+
+選定理由:
+
+- 上流の [ByteDance piano_transcription](https://github.com/bytedance/piano_transcription) / `piano_transcription_inference` と同じライセンスで揃えやすい
+- 特許条項があり、ML ツールの再配布に向きやすい
+- Apache の慣習どおり第三者表記を [NOTICE](NOTICE) にまとめられる
+
+第三者・同梱物の扱いは [NOTICE](NOTICE) を参照してください（上流モデル、Zenodo チェックポイント、任意同梱の ffmpeg など）。  
+ffmpeg を同梱する場合は **別実行ファイルとして同梱**しており、アプリ本体に静的リンクはしていません。
 
 ## 機能
 
@@ -13,16 +26,24 @@
   - Onset / Offset / Frame / Pedal offset 閾値
   - バッチサイズ
   - モデルチェックポイントパス
-- 初回起動時に事前学習モデル (~165 MB) を自動ダウンロード（Windows でも動作）
-- バックグラウンド実行とログ表示
+- 初回実行時に事前学習モデル (~165 MB) を自動ダウンロード
+- Windows 向け exe（onedir）ビルド
 
 ## 必要環境
 
+### Python から実行する場合
+
 - Python 3.9+
-- [ffmpeg](https://ffmpeg.org/)（mp3 等の読み込みに必要。PATH に通す）
+- [ffmpeg](https://ffmpeg.org/)（mp3 等。PATH に通す）
 - （任意）CUDA 対応 GPU + PyTorch CUDA ビルド
 
-## セットアップ
+### 配布 exe を使う場合
+
+- Windows 10/11 x64
+- 初回起動時にモデル自動ダウンロードのためインターネット接続が必要
+- リリース zip に ffmpeg を同梱（ビルド時オプション）
+
+## セットアップ（開発）
 
 ```powershell
 cd D:\work\piano-transcription-gui
@@ -44,6 +65,25 @@ python main.py
 .\run.bat
 ```
 
+## Windows exe のビルド
+
+PyInstaller で **onedir** 配布物を作成します（torch 同梱のため onefile より安定）。
+
+```powershell
+# 依存インストール + ffmpeg 同梱 + dist 出力
+.\build.bat
+
+# ffmpeg 同梱をスキップする場合
+powershell -ExecutionPolicy Bypass -File .\scripts\build_windows.ps1 -SkipFfmpeg
+```
+
+成果物:
+
+- `dist\PianoTranscriptionGUI\PianoTranscriptionGUI.exe`
+- `dist\PianoTranscriptionGUI-windows-x64-vX.Y.Z.zip`
+
+> 配布ビルドは CPU 版 PyTorch を前提にしています。CUDA を使う場合はソースから実行し、CUDA 対応 torch を入れてください。
+
 ## 使い方
 
 1. 「入力オーディオ」でピアノ録音ファイルを選択
@@ -64,6 +104,53 @@ python main.py
 | バッチサイズ | 1 | GPU メモリに余裕があれば増やせる |
 
 論文・公式実装では推論時の各閾値は概ね 0.3 前後が推奨されています。
+
+## GitHub 公開とリリース
+
+### 前提
+
+- GitHub CLI (`gh`) が使えること（本環境では `C:\Program Files\GitHub CLI\gh.exe` / ログイン済み）
+- 作業ツリーがクリーンであること
+
+### 1. リポジトリ作成（初回のみ）
+
+```powershell
+cd D:\work\piano-transcription-gui
+& "C:\Program Files\GitHub CLI\gh.exe" repo create piano-transcription-gui --public --source=. --remote=origin --push
+```
+
+PATH に `gh` が入っているシェルでは `gh repo create ...` でも同じです。
+
+### 2. リリース（推奨フロー）
+
+```powershell
+# version.py のバージョンでタグを切り、push → Actions が zip を Release に添付
+.\release.bat
+
+# バージョンを上げてリリース
+powershell -ExecutionPolicy Bypass -File .\scripts\release.ps1 -Version 0.1.1
+```
+
+内部では次を行います。
+
+1. `version.py` を必要なら更新して commit
+2. 注釈付きタグ `vX.Y.Z` を作成して push
+3. `.github/workflows/build-windows.yml` が Windows ビルドを実行
+4. GitHub Release に zip を添付（LICENSE / NOTICE もパッケージ内に同梱）
+
+手動でタグだけ切る場合:
+
+```powershell
+git tag -a v0.1.0 -m "Release v0.1.0"
+git push origin v0.1.0
+```
+
+### 3. Actions の確認
+
+```powershell
+gh run list --workflow "Build Windows Release"
+gh release list
+```
 
 ## 参考
 

@@ -1,0 +1,72 @@
+name: Build Windows Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read version
+        id: version
+        shell: pwsh
+        run: |
+          $v = python -c "import re; t=open('version.py',encoding='utf-8').read(); print(re.search(r'__version__\\s*=\\s*\"([^\"]+)\"', t).group(1))"
+          "value=$v" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          Write-Host "version=$v"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Build Windows package
+        shell: pwsh
+        run: |
+          powershell -ExecutionPolicy Bypass -File scripts/build_windows.ps1
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PianoTranscriptionGUI-windows-x64-v${{ steps.version.outputs.value }}
+          path: dist/PianoTranscriptionGUI-windows-x64-v*.zip
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Piano Transcription GUI ${{ github.ref_name }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          generate_release_notes: true
+          body: |
+            ## Downloads
+            - Windows x64 zip: `PianoTranscriptionGUI-windows-x64-${{ github.ref_name }}.zip`
+
+            ## License
+            - This project: **Apache License 2.0** (`LICENSE`)
+            - Third-party attributions: `NOTICE` (ByteDance piano transcription / Apache-2.0, optional ffmpeg, etc.)
+
+            ## Notes
+            - First launch downloads the pretrained model (~165 MB) into the user profile.
+            - The packaged build targets **CPU** PyTorch. For CUDA, run from source with a CUDA torch install.
+          files: dist/PianoTranscriptionGUI-windows-x64-v*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

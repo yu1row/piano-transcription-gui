@@ -1,0 +1,40 @@
+Piano Transcription GUI
+Copyright 2026 yu1row
+
+This product includes software developed for local piano audio-to-MIDI
+transcription using upstream research and inference code.
+
+---------------------------------------------------------------------------
+Upstream piano transcription (Apache License 2.0)
+---------------------------------------------------------------------------
+This project uses the pretrained inference stack from:
+
+  - https://github.com/bytedance/piano_transcription
+  - https://github.com/qiuqiangkong/piano_transcription_inference
+
+License: Apache License 2.0
+
+Paper:
+  Qiuqiang Kong, Bochen Li, Xuchen Song, Yuan Wan, and Yuxuan Wang.
+  "High-resolution Piano Transcription with Pedals by Regressing Onsets
+  and Offsets Times." arXiv:2010.01815 (2020).
+
+---------------------------------------------------------------------------
+Pretrained model checkpoint
+---------------------------------------------------------------------------
+The default checkpoint is downloaded at runtime from Zenodo record 4034264
+(CRNN note/pedal model used by piano_transcription_inference). Use of the
+checkpoint is subject to the upstream project / Zenodo distribution terms.
+
+---------------------------------------------------------------------------
+Optional bundled ffmpeg (Windows binary releases only)
+---------------------------------------------------------------------------
+Release builds may ship ffmpeg.exe obtained from:
+  https://www.gyan.dev/ffmpeg/builds/ (essentials build)
+
+ffmpeg is a separate executable (not linked into the Python app) and is
+licensed under LGPL/GPL depending on build configuration.
+See https://ffmpeg.org/legal.html
+
+If you redistribute a binary package, keep LICENSE and this NOTICE file
+alongside the application.
