@@ -1,17 +1,17 @@
-# -*- coding: utf-8 -*-
-"""Create a version tag and push it to trigger the GitHub Release workflow.
-
-Examples:
-  powershell -ExecutionPolicy Bypass -File scripts\\release.ps1
-  powershell -ExecutionPolicy Bypass -File scripts\\release.ps1 -Version 0.1.0
-  powershell -ExecutionPolicy Bypass -File scripts\\release.ps1 -Version 0.1.1 -DryRun
-"""
-
 param(
     [string]$Version,
     [switch]$DryRun,
     [switch]$Force
 )
+
+<#
+.SYNOPSIS
+  Create a version tag and push it to trigger the GitHub Release workflow.
+
+.EXAMPLE
+  powershell -ExecutionPolicy Bypass -File scripts\release.ps1
+  powershell -ExecutionPolicy Bypass -File scripts\release.ps1 -Version 0.1.1
+#>
 
 $ErrorActionPreference = "Stop"
 Set-Location (Split-Path -Parent $PSScriptRoot)

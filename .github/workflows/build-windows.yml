@@ -40,7 +40,8 @@ jobs:
       - name: Build Windows package
         shell: pwsh
         run: |
-          powershell -ExecutionPolicy Bypass -File scripts/build_windows.ps1
+          # Use Windows PowerShell 5.1 for broader script compatibility on runners
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build_windows.ps1
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

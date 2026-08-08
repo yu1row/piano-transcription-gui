@@ -1,16 +1,17 @@
-# -*- coding: utf-8 -*-
-"""Build Windows onedir package with PyInstaller.
-
-Usage (from repo root, with venv activated and deps installed):
-  powershell -ExecutionPolicy Bypass -File scripts\\build_windows.ps1
-  powershell -ExecutionPolicy Bypass -File scripts\\build_windows.ps1 -SkipFfmpeg
-"""
-
 param(
     [switch]$SkipFfmpeg,
     [switch]$SkipInstall,
     [string]$Python = ".\\.venv\\Scripts\\python.exe"
 )
+
+<#
+.SYNOPSIS
+  Build Windows onedir package with PyInstaller.
+
+.EXAMPLE
+  powershell -ExecutionPolicy Bypass -File scripts\build_windows.ps1
+  powershell -ExecutionPolicy Bypass -File scripts\build_windows.ps1 -SkipFfmpeg
+#>
 
 $ErrorActionPreference = "Stop"
 Set-Location (Split-Path -Parent $PSScriptRoot)
